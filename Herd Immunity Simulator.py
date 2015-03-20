@@ -59,7 +59,7 @@ def evalPop():
             else:
                 hUnVac += 1
     immune = (vac*vacImmunity + unVac*natImmunity)/population
-    isHerd = immune>herd
+    isHerd = immune>=herd
     print("Vaccinated: " + str(vac) + " (" + str(round(vac*100/population,1)) + "%)")
     print("Unvaccinated: " + str(unVac) + " (" + str(round(unVac*100/population,1)) + "%)")
     print("Healthy vaccinated: " + str(hVac) + " (" + str(round(hVac*100/vac,1)) + "% of vaccinated)")
