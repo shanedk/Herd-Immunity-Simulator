@@ -21,10 +21,11 @@ Rnull = 5 # The amount of people an infected person can infect
 natImmunity = .1
 vacImmunity = .9
 vaccinated = .9
-pop = []
-infected = []
 
 # End user-set values
+
+pop = []
+infected = []
 
 import random,sys
 
