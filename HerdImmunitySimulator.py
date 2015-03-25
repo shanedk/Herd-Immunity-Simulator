@@ -19,14 +19,14 @@
 def restricted_vaccination(float_input):
     x = float(float_input)
     if x < 0.0 or x > 1.0:
-        raise argparse.ArgumentTypeError("%r not within range (0.0, 1.0)"%(x,))
+        raise argparse.ArgumentTypeError("%r not within range (0.0, 1.0)" % x)
     if x == 0.0 or x == 1.0:
         raise argparse.ArgumentTypeError("0 or 1 are not acceptable inputs for vaccination rate")
     return x
 def restricted_immunity(float_input):
     x = float(float_input)
     if x < 0.0 or x > 1.0:
-        raise argparse.ArgumentTypeError("%r not in range (0.0, 1.0)"%(x,))
+        raise argparse.ArgumentTypeError("%r not in range (0.0, 1.0)" % x)
     return x
 def restricted_population(int_input):
     x=int(int_input)
