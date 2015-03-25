@@ -16,13 +16,37 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # User can set these values:
+import argparse
 
-population = 1000
-Rnull = 5 # The amount of people an infected person can infect
-natImmunity = .1
-vacImmunity = .9
-vaccinated = .9
+parser = argparse.ArgumentParser(description='simulate spread of infection in a population')
 
+parser.add_argument('-p', '--population', type=int, dest='population', default=[1000], nargs=1,
+                    help='set the size of the population')
+parser.add_argument('-r','--Rnull', type=int, dest='Rnull', default=[5], nargs=1,
+                    help='The amount of people an infected person can infect')
+parser.add_argument('-n','--natImmunity', type=float, dest='natImmunity', default=[0.1], nargs=1,
+                    help='natural immunity of the population to the disease' +
+                         '(chance of an exposed unvaccinated person of resisting infection)')
+parser.add_argument('-v','--vacImmunity', type=float, dest='vacImmunity', default=[0.9], nargs=1,
+                    help='immunity conferred by vaccination (chance to resist infection)')
+parser.add_argument('-V','--vaccRate', type=float, dest='vaccinated', default=[0.9], nargs=1,
+                    help='percentage of the population that has been vaccinated')
+parser.add_argument('--debug', dest='debug_flag', default=False, action='store_true',
+                    help='print additional debug output')
+args = parser.parse_args()
+
+population = args.population[0]
+Rnull = args.Rnull[0]
+natImmunity = args.natImmunity[0]
+vacImmunity = args.vacImmunity[0]
+vaccinated = args.vaccinated[0]
+
+if args.debug_flag:
+    print("\n\npopulation value: %d" % population)
+    print("Rnull value: %d" % Rnull)
+    print("natImmunity value: %f" % natImmunity)
+    print("vacImmunity value: %f" % vacImmunity)
+    print("vaccinated value: %f\n\n" % vaccinated)
 # End user-set values
 
 pop = []
