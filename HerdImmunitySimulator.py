@@ -16,20 +16,42 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # User can set these values:
+def restricted_vaccination(float_input):
+    x = float(float_input)
+    if x < 0.0 or x > 1.0:
+        raise argparse.ArgumentTypeError("%r not within range (0.0, 1.0)"%(x,))
+    if x == 0.0 or x == 1.0:
+        raise argparse.ArgumentTypeError("0 or 1 are not acceptable inputs for vaccination rate")
+    return x
+def restricted_immunity(float_input):
+    x = float(float_input)
+    if x < 0.0 or x > 1.0:
+        raise argparse.ArgumentTypeError("%r not in range (0.0, 1.0)"%(x,))
+    return x
+def restricted_population(int_input):
+    x=int(int_input)
+    if x <= 0:
+        raise argparse.ArgumentTypeError("Population must be greater than 0")
+    return x
+def restricted_Rnull(int_input):
+    x=int(int_input)
+    if x <= 0:
+        raise argparse.ArgumentTypeError("Rnull must be greater than 0")
+    return x
 import argparse
 
 parser = argparse.ArgumentParser(description='simulate spread of infection in a population')
 
-parser.add_argument('-p', '--population', type=int, dest='population', default=[1000], nargs=1,
+parser.add_argument('-p', '--population', type=restricted_population, dest='population', default=[1000], nargs=1,
                     help='set the size of the population')
-parser.add_argument('-r','--Rnull', type=int, dest='Rnull', default=[5], nargs=1,
+parser.add_argument('-r','--Rnull', type=restricted_Rnull, dest='Rnull', default=[5], nargs=1,
                     help='The amount of people an infected person can infect')
-parser.add_argument('-n','--natImmunity', type=float, dest='natImmunity', default=[0.1], nargs=1,
+parser.add_argument('-n','--natImmunity', type=restricted_immunity, dest='natImmunity', default=[0.1], nargs=1,
                     help='natural immunity of the population to the disease' +
                          '(chance of an exposed unvaccinated person of resisting infection)')
-parser.add_argument('-v','--vacImmunity', type=float, dest='vacImmunity', default=[0.9], nargs=1,
+parser.add_argument('-v','--vacImmunity', type=restricted_immunity, dest='vacImmunity', default=[0.9], nargs=1,
                     help='immunity conferred by vaccination (chance to resist infection)')
-parser.add_argument('-V','--vaccRate', type=float, dest='vaccinated', default=[0.9], nargs=1,
+parser.add_argument('-V','--vaccRate', type=restricted_vaccination, dest='vaccinated', default=[0.9], nargs=1,
                     help='percentage of the population that has been vaccinated')
 parser.add_argument('--debug', dest='debug_flag', default=False, action='store_true',
                     help='print additional debug output')
@@ -47,6 +69,8 @@ if args.debug_flag:
     print("natImmunity value: %f" % natImmunity)
     print("vacImmunity value: %f" % vacImmunity)
     print("vaccinated value: %f\n\n" % vaccinated)
+
+#if
 # End user-set values
 
 pop = []
