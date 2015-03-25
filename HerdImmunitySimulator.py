@@ -16,6 +16,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # User can set these values:
+
+#function to provide limits to vaccination input values
 def restricted_vaccination(float_input):
     x = float(float_input)
     if x < 0.0 or x > 1.0:
@@ -23,17 +25,20 @@ def restricted_vaccination(float_input):
     if x == 0.0 or x == 1.0:
         raise argparse.ArgumentTypeError("0 or 1 are not acceptable inputs for vaccination rate")
     return x
+#function to provide limits to immunity input values
 def restricted_immunity(float_input):
     x = float(float_input)
     if x < 0.0 or x > 1.0:
         raise argparse.ArgumentTypeError("%r not in range (0.0, 1.0)" % x)
     return x
+#function to provide limits to population input values
 def restricted_population(int_input):
     x=int(int_input)
     if x <= 0:
         raise argparse.ArgumentTypeError("must be greater than 0")
     return x
-def restricted_Rnull(int_input):
+#function to provide limits to Rnull input values
+def restricted_rnull(int_input):
     x=int(int_input)
     if x <= 0:
         raise argparse.ArgumentTypeError("must be greater than 0")
@@ -44,7 +49,7 @@ parser = argparse.ArgumentParser(description='simulate spread of infection in a 
 
 parser.add_argument('-p', '--population', type=restricted_population, dest='population', default=[1000], nargs=1,
                     help='set the size of the population')
-parser.add_argument('-r','--Rnull', type=restricted_Rnull, dest='Rnull', default=[5], nargs=1,
+parser.add_argument('-r','--Rnull', type=restricted_rnull, dest='Rnull', default=[5], nargs=1,
                     help='The amount of people an infected person can infect')
 parser.add_argument('-n','--natImmunity', type=restricted_immunity, dest='natImmunity', default=[0.1], nargs=1,
                     help='natural immunity of the population to the disease' +
@@ -57,6 +62,7 @@ parser.add_argument('--debug', dest='debug_flag', default=False, action='store_t
                     help='print additional debug output')
 args = parser.parse_args()
 
+#set variable values from argparser
 population = args.population[0]
 Rnull = args.Rnull[0]
 natImmunity = args.natImmunity[0]
@@ -69,21 +75,19 @@ if args.debug_flag:
     print("natImmunity value: %f" % natImmunity)
     print("vacImmunity value: %f" % vacImmunity)
     print("vaccinated value: %f\n\n" % vaccinated)
-
-#if
 # End user-set values
 
-pop = []
-infected = []
+pop = []  # list to contain population of individuals' vaccination status
+infected = []  # list of individuals' infection status
 
 import random,sys
 
-sys.setrecursionlimit(population*Rnull) # We're going to be doing a LOT of recursion!
+sys.setrecursionlimit(population*Rnull)  # We're going to be doing a LOT of recursion!
 
 def initPop():
     for i in range(population):
         r = random.random()
-        pop.append(r<=vaccinated)
+        pop.append(r <= vaccinated)
         infected.append(False)
 
 def evalPop():
@@ -109,38 +113,38 @@ def evalPop():
             else:
                 hUnVac += 1
     immune = (vac*vacImmunity + unVac*natImmunity)/population
-    isHerd = immune>=herd
-    print("Vaccinated: " + str(vac) + " (" + str(round(vac*100/population,1)) + "%)")
-    print("Unvaccinated: " + str(unVac) + " (" + str(round(unVac*100/population,1)) + "%)")
-    print("Healthy vaccinated: " + str(hVac) + " (" + str(round(hVac*100/vac,1)) + "% of vaccinated)")
-    print("Healthy unvaccinated: " + str(hUnVac) + " (" + str(round(hUnVac*100/unVac,1)) + "% of unvaccinated)")
-    print("Infected vaccinated: " + str(iVac) + " (" + str(round(iVac*100/vac,1)) + "% of vaccinated)")
-    print("Infected unvaccinated: " + str(iUnVac) + " (" + str(round(iUnVac*100/unVac,1)) + "% of unvaccinated)")
-    print("Herd Immunity: " + str(isHerd) + " (" + str(round(herd*100,1)) + "% needed for Herd Immunity; we have "+str(round(immune*100,1))+"%)")
+    isHerd = immune >= herd
+    print("Vaccinated: " + str(vac) + " (" + str(round(vac*100/population, 1)) + "%)")
+    print("Unvaccinated: " + str(unVac) + " (" + str(round(unVac*100/population, 1)) + "%)")
+    print("Healthy vaccinated: " + str(hVac) + " (" + str(round(hVac*100/vac, 1)) + "% of vaccinated)")
+    print("Healthy unvaccinated: " + str(hUnVac) + " (" + str(round(hUnVac*100/unVac, 1)) + "% of unvaccinated)")
+    print("Infected vaccinated: " + str(iVac) + " (" + str(round(iVac*100/vac, 1)) + "% of vaccinated)")
+    print("Infected unvaccinated: " + str(iUnVac) + " (" + str(round(iUnVac*100/unVac, 1)) + "% of unvaccinated)")
+    print("Herd Immunity: " + str(isHerd) + " (" + str(round(herd*100, 1)) + "% needed for Herd Immunity; we have "+str(round(immune*100,1))+"%)")
 
-def infectNode(node):
-    if not(infected[node]): # We don't do anything if it's already infected
+def infectNode(node):  # attempt to infect this individual
+    if not(infected[node]):  # We don't do anything if it's already infected
         r = random.random()
         if pop[node]:
-            infect = (r>vacImmunity)
+            infect = (r > vacImmunity)  # infection attempt using immunity due to vaccine protection
         else:
-            infect = (r>natImmunity)
+            infect = (r > natImmunity)  # infection attempt using natural immunity
         if infect:
             infected[node] = True
-            infectSpread(node)
+            infectSpread(node)  # recursively spread infection if infection was caught
 
-def infectSpread(node):
-    while True: # Let's make sure our given node isn't in that list
-        rNodes = random.sample(range(0,population),Rnull)
-        if not(node in rNodes):
+def infectSpread(node):  # spread infection from infected individual recursively
+    while True:  # Let's make sure our given node isn't in that list
+        rNodes = random.sample(range(0, population), Rnull)  # generate a random sample of node numbers
+        if not(node in rNodes):  # if infecting node is not in random sample, break out of loop
             break
-    for n in rNodes:
+    for n in rNodes:  # attempt to spread infection to nodes in random sample
         infectNode(n)
 
-def initInfect():
+def initInfect():  # infect the first person
     node = int(random.random()*population)
-    infected[node] = True # The first one is always infected no matter what
-    infectSpread(node)
+    infected[node] = True  # The first one is always infected no matter what
+    infectSpread(node)  # begin recursive spread of infection
 
 initPop()
 
