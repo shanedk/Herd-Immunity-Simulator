@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #    Herd Immunity Simulator
 #    Copyright 2015 Shane D. Killian
 #
