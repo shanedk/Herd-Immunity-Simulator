@@ -31,12 +31,12 @@ def restricted_immunity(float_input):
 def restricted_population(int_input):
     x=int(int_input)
     if x <= 0:
-        raise argparse.ArgumentTypeError("Population must be greater than 0")
+        raise argparse.ArgumentTypeError("must be greater than 0")
     return x
 def restricted_Rnull(int_input):
     x=int(int_input)
     if x <= 0:
-        raise argparse.ArgumentTypeError("Rnull must be greater than 0")
+        raise argparse.ArgumentTypeError("must be greater than 0")
     return x
 import argparse
 
