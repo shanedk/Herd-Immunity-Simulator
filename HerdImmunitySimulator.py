@@ -15,6 +15,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# User can set these values in code (will be default for arguments):
+
+population = 1000
+Rnull = 5 # The amount of people an infected person can infect
+natImmunity = .1
+vacImmunity = .9
+vaccinated = .9
+
+# End user-set values
+
 #function to provide limits to vaccination input values
 def restricted_vaccination(float_input):
     x = float(float_input)
@@ -45,16 +55,16 @@ import argparse
 
 parser = argparse.ArgumentParser(description='simulate spread of infection in a population')
 
-parser.add_argument('-p', '--population', type=restricted_population, dest='population', default=[1000], nargs=1,
+parser.add_argument('-p', '--population', type=restricted_population, dest='population', default=[population], nargs=1,
                     help='set the size of the population')
-parser.add_argument('-r','--Rnull', type=restricted_rnull, dest='Rnull', default=[5], nargs=1,
+parser.add_argument('-r','--Rnull', type=restricted_rnull, dest='Rnull', default=[Rnull], nargs=1,
                     help='The amount of people an infected person can infect')
-parser.add_argument('-n','--natImmunity', type=restricted_immunity, dest='natImmunity', default=[0.1], nargs=1,
+parser.add_argument('-n','--natImmunity', type=restricted_immunity, dest='natImmunity', default=[natImmunity], nargs=1,
                     help='natural immunity of the population to the disease' +
                          '(chance of an exposed unvaccinated person of resisting infection)')
-parser.add_argument('-v','--vacImmunity', type=restricted_immunity, dest='vacImmunity', default=[0.9], nargs=1,
+parser.add_argument('-v','--vacImmunity', type=restricted_immunity, dest='vacImmunity', default=[vacImmunity], nargs=1,
                     help='immunity conferred by vaccination (chance to resist infection)')
-parser.add_argument('-V','--vaccRate', type=restricted_vaccination, dest='vaccinated', default=[0.9], nargs=1,
+parser.add_argument('-V','--vaccRate', type=restricted_vaccination, dest='vaccinated', default=[vaccinated], nargs=1,
                     help='percentage of the population that has been vaccinated')
 parser.add_argument('--debug', dest='debug_flag', default=False, action='store_true',
                     help='print additional debug output')
@@ -66,6 +76,10 @@ Rnull = args.Rnull[0]
 natImmunity = args.natImmunity[0]
 vacImmunity = args.vacImmunity[0]
 vaccinated = args.vaccinated[0]
+
+# Reality check: if you think about it, a vaccinated person can't be LESS immune
+if vacImmunity < natImmunity:
+    vacImmunity = natImmunity
 
 if args.debug_flag:
     print("\n\npopulation value: %d" % population)
