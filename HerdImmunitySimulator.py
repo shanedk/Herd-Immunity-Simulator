@@ -15,15 +15,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# User can set these values:
-
 #function to provide limits to vaccination input values
 def restricted_vaccination(float_input):
     x = float(float_input)
     if x < 0.0 or x > 1.0:
         raise argparse.ArgumentTypeError("%r not within range (0.0, 1.0)" % x)
-    if x == 0.0 or x == 1.0:
-        raise argparse.ArgumentTypeError("0 or 1 are not acceptable inputs for vaccination rate")
+    #if x == 0.0 or x == 1.0: # We should be able to do this
+    #    raise argparse.ArgumentTypeError("0 or 1 are not acceptable inputs for vaccination rate")
     return x
 #function to provide limits to immunity input values
 def restricted_immunity(float_input):
@@ -114,12 +112,28 @@ def evalPop():
                 hUnVac += 1
     immune = (vac*vacImmunity + unVac*natImmunity)/population
     isHerd = immune >= herd
+	
+    # The following lines are to fix the Division By Zero bug
+    if vac == 0:
+        hVacP = 0
+        iVacP = 0
+    else:
+        hVacP = round(hVac*100/vac, 1)
+        iVacP = round(iVac*100/vac, 1)
+		
+    if unVac == 0:
+        hUnVacP = 0
+        iUnVacP = 0
+    else:
+        hUnVacP = round(hUnVac*100/unVac, 1)
+        iUnVacP = round(iUnVac*100/unVac, 1)
+	
     print("Vaccinated: " + str(vac) + " (" + str(round(vac*100/population, 1)) + "%)")
     print("Unvaccinated: " + str(unVac) + " (" + str(round(unVac*100/population, 1)) + "%)")
-    print("Healthy vaccinated: " + str(hVac) + " (" + str(round(hVac*100/vac, 1)) + "% of vaccinated)")
-    print("Healthy unvaccinated: " + str(hUnVac) + " (" + str(round(hUnVac*100/unVac, 1)) + "% of unvaccinated)")
-    print("Infected vaccinated: " + str(iVac) + " (" + str(round(iVac*100/vac, 1)) + "% of vaccinated)")
-    print("Infected unvaccinated: " + str(iUnVac) + " (" + str(round(iUnVac*100/unVac, 1)) + "% of unvaccinated)")
+    print("Healthy vaccinated: " + str(hVac) + " (" + str(hVacP) + "% of vaccinated)")
+    print("Healthy unvaccinated: " + str(hUnVac) + " (" + str(hUnVacP) + "% of unvaccinated)")
+    print("Infected vaccinated: " + str(iVac) + " (" + str(iVacP) + "% of vaccinated)")
+    print("Infected unvaccinated: " + str(iUnVac) + " (" + str(iUnVacP) + "% of unvaccinated)")
     print("Herd Immunity: " + str(isHerd) + " (" + str(round(herd*100, 1)) + "% needed for Herd Immunity; we have "+str(round(immune*100,1))+"%)")
 
 def infectNode(node):  # attempt to infect this individual
