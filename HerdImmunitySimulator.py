@@ -18,7 +18,8 @@
 # User can set these values in code (will be default for arguments):
 
 population = 1000
-Rnull = 5 # The amount of people an infected person can infect
+Rnull = 5.5 # The amount of people an infected person can infect
+            # Note: Rnull no longer has to be an integer, it can take a decimal
 natImmunity = .1
 vacImmunity = .9
 vaccinated = .9
@@ -94,7 +95,7 @@ infected = []  # list of individuals' infection status
 
 import random,sys
 
-sys.setrecursionlimit(population*Rnull)  # We're going to be doing a LOT of recursion!
+sys.setrecursionlimit(population*int(Rnull))  # We're going to be doing a LOT of recursion!
 
 def initPop():
     for i in range(population):
@@ -162,8 +163,16 @@ def infectNode(node):  # attempt to infect this individual
             infectSpread(node)  # recursively spread infection if infection was caught
 
 def infectSpread(node):  # spread infection from infected individual recursively
+
+    numInfect = int(Rnull) # number of people to go on and infect; if Rnull is an int, Rnull people will be infected
+
+    if Rnull > int(Rnull): # if Rnull isn't an integer...
+        r = random.random()
+        if Rnull - int(Rnull) <= r: # See if the decimal value <= a random number from 0 to 1
+            numInfect += 1          # And if it is, add 1 to the number to be infected
+
     while True:  # Let's make sure our given node isn't in that list
-        rNodes = random.sample(range(0, population), Rnull)  # generate a random sample of node numbers
+        rNodes = random.sample(range(0, population), numInfect)  # generate a random sample of node numbers
         if not(node in rNodes):  # if infecting node is not in random sample, break out of loop
             break
     for n in rNodes:  # attempt to spread infection to nodes in random sample
