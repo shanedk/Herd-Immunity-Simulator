@@ -168,7 +168,7 @@ def infectSpread(node):  # spread infection from infected individual recursively
 
     if Rnull > int(Rnull): # if Rnull isn't an integer...
         r = random.random()
-        if Rnull - int(Rnull) <= r: # See if the decimal value <= a random number from 0 to 1
+        if Rnull - int(Rnull) > r: # See if the decimal value > a random number from 0 to 1
             numInfect += 1          # And if it is, add 1 to the number to be infected
 
     while True:  # Let's make sure our given node isn't in that list
