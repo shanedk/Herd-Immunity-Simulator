@@ -50,7 +50,14 @@ def restricted_population(int_input):
         raise argparse.ArgumentTypeError("must be greater than 0")
     return x
 #function to provide limits to Rnull input values
-def restricted_rnull(int_input):
+def restricted_rnull(float_input):
+    x=int(int_input)
+    if x <= 0:
+        raise argparse.ArgumentTypeError("must be greater than 0")
+    return x
+import argparse
+#function to provide limits to Rrange input values
+def restricted_rrange(float_input):
     x=int(int_input)
     if x <= 0:
         raise argparse.ArgumentTypeError("must be greater than 0")
@@ -63,6 +70,8 @@ parser.add_argument('-p', '--population', type=restricted_population, dest='popu
                     help='set the size of the population')
 parser.add_argument('-r','--Rnull', type=restricted_rnull, dest='Rnull', default=[Rnull], nargs=1,
                     help='The amount of people an infected person can infect')
+parser.add_argument('-g','--Rrange', type=restricted_rrange, dest='Rrange', default=[Rrange], nargs=1,
+                    help='The variance in the Rnull value')
 parser.add_argument('-n','--natImmunity', type=restricted_immunity, dest='natImmunity', default=[natImmunity], nargs=1,
                     help='natural immunity of the population to the disease' +
                          '(chance of an exposed unvaccinated person of resisting infection)')
@@ -77,6 +86,7 @@ args = parser.parse_args()
 #set variable values from argparser
 population = args.population[0]
 Rnull = args.Rnull[0]
+Rrange = args.Rrange[0]
 natImmunity = args.natImmunity[0]
 vacImmunity = args.vacImmunity[0]
 vaccinated = args.vaccinated[0]
@@ -88,6 +98,7 @@ if vacImmunity < natImmunity:
 if args.debug_flag:
     print("\n\npopulation value: %d" % population)
     print("Rnull value: %d" % Rnull)
+    print("Rrange value: %d" % Rrange)
     print("natImmunity value: %f" % natImmunity)
     print("vacImmunity value: %f" % vacImmunity)
     print("vaccinated value: %f\n\n" % vaccinated)
