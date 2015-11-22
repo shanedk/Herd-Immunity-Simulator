@@ -19,7 +19,10 @@
 
 population = 1000
 Rnull = 5.5 # The amount of people an infected person can infect
+            # aka the Basic Reproduction Number
             # Note: Rnull no longer has to be an integer, it can take a decimal
+Rrange = 3  # The variance in the Rnull. For example, to simulate measles
+            # (12-18), set Rnull to 15 and Rrange to 3
 natImmunity = .1
 vacImmunity = .9
 vaccinated = .9
@@ -164,12 +167,18 @@ def infectNode(node):  # attempt to infect this individual
 
 def infectSpread(node):  # spread infection from infected individual recursively
 
-    numInfect = int(Rnull) # number of people to go on and infect; if Rnull is an int, Rnull people will be infected
+    if Rrange == 0:
+        numInfect = int(Rnull) # number of people to go on and infect; if Rnull is an int, Rnull people will be infected
+    else:
+        r = Rrange * 2 * random.random()
+        numInfect = Rnull - Rrange + r
 
-    if Rnull > int(Rnull): # if Rnull isn't an integer...
+    if numInfect > int(numInfect):
         r = random.random()
-        if Rnull - int(Rnull) > r: # See if the decimal value > a random number from 0 to 1
-            numInfect += 1          # And if it is, add 1 to the number to be infected
+        if numInfect - int(numInfect) > r:  # See if the decimal value > a random number from 0 to 1
+            numInfect = 1 + int(numInfect)  # And if it is, add 1 to the number to be infected
+        else:
+            numInfect = int(numInfect)
 
     while True:  # Let's make sure our given node isn't in that list
         rNodes = random.sample(range(0, population), numInfect)  # generate a random sample of node numbers
